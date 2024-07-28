@@ -2,7 +2,7 @@ import { TokenInfo, ApiV3Token } from '@raydium-io/raydium-sdk-v2'
 import { useTranslation } from 'react-i18next'
 import { useEvent } from '@/hooks/useEvent'
 import { colors } from '@/theme/cssVariables'
-import { Flex, Text, Box, Button, Modal, ModalBody, ModalContent, ModalOverlay } from '@chakra-ui/react'
+import { Flex, Text, Box, Button, Modal, ModalBody, ModalContent, ModalOverlay, useColorMode } from '@chakra-ui/react'
 import WarningIcon from '@/icons/misc/WarningIcon'
 import AddressChip from '@/components/AddressChip'
 import TokenAvatar from '@/components/TokenAvatar'
@@ -17,15 +17,16 @@ export interface TokenUnknownAddDialogProps {
 
 export default function TokenUnknownAddDialog({ onConfirm, isOpen, onClose, token }: TokenUnknownAddDialogProps) {
   const { t } = useTranslation()
+  const { colorMode } = useColorMode()
   const cacheInfo = getStorageToken(token.address)
 
   const tokenInfo = {
     ...token,
     ...(cacheInfo
       ? {
-          symbol: cacheInfo.symbol,
-          name: cacheInfo.name
-        }
+        symbol: cacheInfo.symbol,
+        name: cacheInfo.name
+      }
       : {})
   }
 
@@ -35,7 +36,11 @@ export default function TokenUnknownAddDialog({ onConfirm, isOpen, onClose, toke
   return (
     <Modal variant={'mobileFullPage'} isOpen={isOpen} onClose={handleClose}>
       <ModalOverlay />
-      <ModalContent>
+      <ModalContent
+        background={colorMode !== "dark" ? colors.backgroundTransparent11 : colors.backgroundTransparent11}
+        border={colorMode !== "dark" ? colors.cardBorder02 : ""}
+        backdropFilter={colorMode !== "dark" ? colors.backDropFilter : ""}
+      >
         <ModalBody display={'flex'} flexDirection={'column'} overflowX="hidden">
           <Flex
             height={['auto', '30vh']}

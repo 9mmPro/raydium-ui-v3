@@ -2,15 +2,20 @@ import AddressChip from '@/components/AddressChip'
 import CircleCheck from '@/icons/misc/CircleCheck'
 import { colors } from '@/theme/cssVariables'
 import { routeToPage } from '@/utils/routeTools'
-import { Button, HStack, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Text, VStack } from '@chakra-ui/react'
+import { Button, HStack, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Text, VStack, useColorMode } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
 
 export function TxSuccessModal(props: { farmId: string; isOpen: boolean; onClose: () => void }) {
   const { t } = useTranslation()
+  const { colorMode } = useColorMode()
   return (
     <Modal isOpen={props.isOpen} onClose={props.onClose} size={'sm'}>
       <ModalOverlay />
-      <ModalContent>
+      <ModalContent
+        background={colorMode !== "dark" ? colors.backgroundTransparent11 : colors.backgroundTransparent11}
+        border={colorMode !== "dark" ? colors.cardBorder02 : ""}
+        backdropFilter={colorMode !== "dark" ? colors.backDropFilter : ""}
+      >
         <ModalHeader display="none">{t('farm.title_farm_created_success')}</ModalHeader>
         <ModalBody>
           <VStack pt={3} spacing={3}>

@@ -18,7 +18,8 @@ import {
   ModalContent,
   ModalHeader,
   ModalOverlay,
-  Text
+  Text,
+  useColorMode
 } from '@chakra-ui/react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -40,6 +41,7 @@ import { PriorityButton } from './components/PriorityButton'
 import DisclaimerModal from './components/DisclaimerModal'
 import { keyframes } from '@emotion/react'
 import AppVersion from './AppVersion'
+import Image from 'next/image'
 
 export interface NavSettings {
   // colorTheme: 'dark' | 'light'
@@ -118,7 +120,8 @@ function AppNavLayout({
         <Desktop>
           <Box flex={'none'}>
             <Link href="/swap">
-              <RaydiumLogo />
+              {/* <RaydiumLogo /> */}
+              <Image src={"/9mmLogo.svg"} alt='logo' width={50} height={50} />
             </Link>
           </Box>
         </Desktop>
@@ -129,14 +132,14 @@ function AppNavLayout({
               {pathname === '/swap'
                 ? t('swap.title')
                 : pathname === '/liquidity-pools'
-                ? t('liquidity.title')
-                : pathname === '/portfolio'
-                ? t('portfolio.title')
-                : pathname === '/playground'
-                ? t('common.playground')
-                : pathname === '/staking'
-                ? t('staking.title')
-                : ''}
+                  ? t('liquidity.title')
+                  : pathname === '/portfolio'
+                    ? t('portfolio.title')
+                    : pathname === '/playground'
+                      ? t('common.playground')
+                      : pathname === '/staking'
+                        ? t('staking.title')
+                        : ''}
             </Text>
           </HStack>
         </Mobile>
@@ -265,6 +268,7 @@ function SettingsMenu() {
 function SettingsMenuModalContent(props: { isOpen: boolean; triggerRef: React.RefObject<HTMLDivElement>; onClose: () => void }) {
   const contentRef = useRef<HTMLDivElement>(null)
   const { t } = useTranslation()
+  const { colorMode } = useColorMode()
   const triggerPanelGap = 8
   const isMobile = useAppStore((s) => s.isMobile)
   const getTriggerRect = () => props.triggerRef.current?.getBoundingClientRect()
@@ -278,9 +282,8 @@ function SettingsMenuModalContent(props: { isOpen: boolean; triggerRef: React.Re
             const triggerRect = getTriggerRect()
             return (
               triggerRect
-                ? `translate(${isMobile ? 0 : -(window.innerWidth - triggerRect.right)}px, ${
-                    triggerRect.bottom + triggerPanelGap
-                  }px) !important`
+                ? `translate(${isMobile ? 0 : -(window.innerWidth - triggerRect.right)}px, ${triggerRect.bottom + triggerPanelGap
+                }px) !important`
                 : undefined
             ) as string | undefined
           })()
@@ -288,6 +291,9 @@ function SettingsMenuModalContent(props: { isOpen: boolean; triggerRef: React.Re
         ref={contentRef}
         marginTop={0}
         marginRight={['auto', 0]}
+        background={colorMode !== "dark" ? colors.backgroundTransparent11 : colors.backgroundTransparent11}
+        border={colorMode !== "dark" ? colors.cardBorder02 : ""}
+        backdropFilter={colorMode !== "dark" ? colors.backDropFilter : ""}
       >
         <ModalHeader>{t('setting_board.panel_title')}</ModalHeader>
         <ModalCloseButton />

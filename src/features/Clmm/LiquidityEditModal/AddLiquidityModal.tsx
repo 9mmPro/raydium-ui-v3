@@ -13,7 +13,8 @@ import {
   ModalHeader,
   ModalFooter,
   ModalOverlay,
-  HStack
+  HStack,
+  useColorMode
 } from '@chakra-ui/react'
 import { solToWSol } from '@raydium-io/raydium-sdk-v2'
 import shallow from 'zustand/shallow'
@@ -60,6 +61,7 @@ export default function AddLiquidityModal({
   position: ClmmPosition
 }) {
   const { t } = useTranslation()
+  const { colorMode } = useColorMode()
   const featureDisabled = useAppStore((s) => s.featureDisabled.addConcentratedPosition)
   const getTokenBalanceUiAmount = useTokenAccountStore((s) => s.getTokenBalanceUiAmount)
   const { getPriceAndAmount } = useClmmBalance({})
@@ -188,7 +190,11 @@ export default function AddLiquidityModal({
   return (
     <Modal isOpen={isOpen} onClose={handleCloseModal} size="lg">
       <ModalOverlay />
-      <ModalContent>
+      <ModalContent
+        background={colorMode !== "dark" ? colors.backgroundTransparent11 : colors.backgroundTransparent11}
+        border={colorMode !== "dark" ? colors.cardBorder02 : ""}
+        backdropFilter={colorMode !== "dark" ? colors.backDropFilter : ""}
+      >
         <ModalHeader display="flex" gap={[1, 2]} alignItems={'center'}>
           <Text>{t('clmm.modal_header_add_liquidity_to')}</Text>
           <TokenAvatarPair size={['smi', 'md']} token1={poolInfo.mintA} token2={poolInfo.mintB} />

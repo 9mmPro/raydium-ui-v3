@@ -3,7 +3,7 @@ import useFetchPoolChartData from '@/hooks/pool/useFetchPoolChartData'
 import { useAppStore } from '@/store'
 import { colors } from '@/theme/cssVariables'
 import { shrinkToValue } from '@/utils/shrinkToValue'
-import { Button, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay } from '@chakra-ui/react'
+import { Button, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, useColorMode } from '@chakra-ui/react'
 import { ReactNode, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import Chart from './Chart'
@@ -27,11 +27,16 @@ export default function PoolChartModal<T extends string>({
   onClose?: () => void
 }) {
   const { t } = useTranslation()
+  const { colorMode } = useColorMode()
 
   return (
     <Modal size="xl" isOpen={isOpen} onClose={onClose ?? (() => {})}>
       <ModalOverlay />
-      <ModalContent>
+      <ModalContent
+        background={colorMode !== "dark" ? colors.backgroundTransparent11 : colors.backgroundTransparent11}
+        border={colorMode !== "dark" ? colors.cardBorder02 : ""}
+        backdropFilter={colorMode !== "dark" ? colors.backDropFilter : ""}
+      >
         <ModalHeader>{shrinkToValue(renderModalHeader, [{ isOpen }])}</ModalHeader>
         <ModalCloseButton />
 

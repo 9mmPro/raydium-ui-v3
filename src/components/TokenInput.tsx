@@ -1,37 +1,37 @@
+import useTokenPrice from '@/hooks/token/useTokenPrice'
+import { useEvent } from '@/hooks/useEvent'
+import BalanceWalletIcon from '@/icons/misc/BalanceWalletIcon'
+import ChevronDownIcon from '@/icons/misc/ChevronDownIcon'
+import { useAppStore, useTokenAccountStore, useTokenStore } from '@/store'
+import { colors } from '@/theme/cssVariables'
+import { detectedSeparator, formatCurrency, formatToRawLocaleStr, trimTrailZero } from '@/utils/numberish/formatter'
 import {
   Box,
   BoxProps,
+  Flex,
   Grid,
   GridItem,
   HStack,
+  Input,
   InputGroup,
   Spacer,
   StackProps,
   SystemStyleObject,
   Text,
   useColorMode,
-  useDisclosure,
-  Input
+  useDisclosure
 } from '@chakra-ui/react'
-import { ApiV3Token, TokenInfo, SOL_INFO } from '@raydium-io/raydium-sdk-v2'
+import { ApiV3Token, SOL_INFO, TokenInfo } from '@raydium-io/raydium-sdk-v2'
 import Decimal from 'decimal.js'
-import React, { ReactNode, useEffect, useState, useRef } from 'react'
-import useTokenPrice from '@/hooks/token/useTokenPrice'
-import { useEvent } from '@/hooks/useEvent'
-import { toastSubject } from '@/hooks/toast/useGlobalToast'
-import BalanceWalletIcon from '@/icons/misc/BalanceWalletIcon'
-import ChevronDownIcon from '@/icons/misc/ChevronDownIcon'
-import { useAppStore, useTokenAccountStore, useTokenStore } from '@/store'
-import { colors } from '@/theme/cssVariables'
-import { trimTrailZero, formatCurrency, formatToRawLocaleStr, detectedSeparator } from '@/utils/numberish/formatter'
+import { ReactNode, useEffect, useRef, useState } from 'react'
 
 import { t } from 'i18next'
 import Button from './Button'
 import TokenAvatar from './TokenAvatar'
 import TokenSelectDialog, { TokenSelectDialogProps } from './TokenSelectDialog'
-import TokenUnknownAddDialog from './TokenSelectDialog/components/TokenUnknownAddDialog'
 import TokenFreezeDialog from './TokenSelectDialog/components/TokenFreezeDialog'
 import { TokenListHandles } from './TokenSelectDialog/components/TokenList'
+import TokenUnknownAddDialog from './TokenSelectDialog/components/TokenUnknownAddDialog'
 
 export const DEFAULT_SOL_RESERVER = 0.01
 export interface TokenInputProps extends Pick<TokenSelectDialogProps, 'filterFn'> {
@@ -116,7 +116,7 @@ function TokenInput(props: TokenInputProps) {
     forceBalanceAmount,
     maxMultiplier,
     solReserveAmount = DEFAULT_SOL_RESERVER,
-    renderTopRightPrefixLabel = () => <BalanceWalletIcon color={colors.textTertiary} />,
+    renderTopRightPrefixLabel = () => <> {colorMode !== "dark" ? <Text color={colors.textTertiary}>Balance </Text> : <BalanceWalletIcon color={colors.textTertiary} />}</>,
     onChange,
     onTokenChange,
     onFocus,
@@ -135,6 +135,7 @@ function TokenInput(props: TokenInputProps) {
   const setExtraTokenListAct = useTokenStore((s) => s.setExtraTokenListAct)
   const whiteListMap = useTokenStore((s) => s.whiteListMap)
   const { colorMode } = useColorMode()
+  type ColorMode = 'light' | 'dark' | 'blue' | 'orange' | 'yellow' | 'green';
   const isLight = colorMode === 'light'
   const { isOpen, onOpen, onClose } = useDisclosure()
   const { isOpen: isOpenUnknownTokenConfirm, onOpen: onOpenUnknownTokenConfirm, onClose: onCloseUnknownTokenConfirm } = useDisclosure()
@@ -151,6 +152,7 @@ function TokenInput(props: TokenInputProps) {
     downerGridPy: size === 'sm' ? '14px' : '16px',
     upperGridPy: size === 'sm' ? '10px' : '12px'
   }
+
 
   const shakeValueDecimal = (value: number | string | undefined, decimals?: number) =>
     value && !String(value).endsWith('.') && decimals != null && new Decimal(value).decimalPlaces() > decimals
@@ -325,7 +327,7 @@ function TokenInput(props: TokenInputProps) {
           zIndex={1}
           display={'grid'}
           placeContent={'center'}
-          bg={'#0003'}
+
           backdropFilter={'blur(4px)'}
           {...renderMaskProps}
         >
@@ -339,14 +341,46 @@ function TokenInput(props: TokenInputProps) {
         {...(topBlockSx || {})}
       >
         {/* top left label */}
-        <Box fontSize="sm" fontWeight={500}>
-          {topLeftLabel}
-        </Box>
+
+        {colorMode !== "dark"
+          ?
+          <Button
+            size="xs"
+            height="fit-content"
+            py={2}
+            px={3}
+            borderRadius="full"
+            bg={colors.buttonBg01}
+            color={colors.textSecondary}
+            fontSize={'sm'}
+            fontWeight="normal"
+            border={'1px solid #ffffff4d'}
+            _hover={{
+              borderColor: colors.secondary,
+              color: colors.secondary,
+              bg: colors.buttonBg01,
+              '.chakra-icon-hover': {
+                fill: colors.secondary
+              }
+            }}
+            _focus={{ boxShadow: 'outline' }}
+            iconSpacing={1}
+            variant={'ghost'}
+          >
+            <Box fontSize="sm" fontWeight={500}>
+              {topLeftLabel}
+            </Box>
+          </Button>
+          :
+          <Box fontSize="sm" fontWeight={500}>
+            {topLeftLabel}
+          </Box>
+        }
         <Spacer />
 
         {/* balance */}
         {!hideBalance && maxString && (
-          <HStack spacing={0.5} color={colors.textTertiary} fontSize="sm">
+          <HStack spacing={0.5} color={colors.textSecondary} fontSize="sm">
             {renderTopRightPrefixLabel()}
             <Text
               onClick={handleClickMax}
@@ -355,8 +389,7 @@ function TokenInput(props: TokenInputProps) {
               textDecorationThickness={'.5px'}
               transition={'300ms'}
               sx={{ textUnderlineOffset: '1px' }}
-              _hover={{ textDecorationThickness: '1.5px', textUnderlineOffset: '2px' }}
-            >
+              _hover={{ textDecorationThickness: '1.5px', textUnderlineOffset: '2px' }}>
               {formatCurrency(maxString, { decimalPlaces: token?.decimals })}
             </Text>
           </HStack>
@@ -364,38 +397,101 @@ function TokenInput(props: TokenInputProps) {
 
         {/* buttons */}
         {hideControlButton ? null : (
-          <HStack>
-            <Button disabled={disableClickBalance} onClick={handleClickMax} variant="rect-rounded-radio" size="xs">
-              {t('input.max_button')}
-            </Button>
-            <Button disabled={disableClickBalance} onClick={handleClickHalf} variant="rect-rounded-radio" size="xs">
+          <HStack
+          >
+            {(colorMode == "dark")
+              &&
+              <Button disabled={disableClickBalance} onClick={handleClickMax} variant="rect-rounded-radio" size="xs" >
+                {t('input.max_button')}
+              </Button>
+            }
+            <Button disabled={disableClickBalance} onClick={handleClickHalf} variant="rect-rounded-radio" size="xs"
+              background={colorMode !== "dark" ? "white" : ""}
+              color={colorMode !== "dark" ? "black" : ""}
+              rounded={colorMode !== "dark" ? "10px" : ""}>
               50%
             </Button>
           </HStack>
         )}
       </HStack>
 
-      <Grid
-        gridTemplate={`
+      {(colorMode == "dark") &&
+        <Grid
+          gridTemplate={`
         "token input" auto
         "token price" auto / auto 1fr
         `}
-        columnGap={[2, 4]}
-        alignItems="center"
-        pointerEvents={disableTotalInputByMask ? 'none' : 'initial'}
-        width={width}
-        sx={sx}
-        rounded={12}
-        px={sizes.downerUpperGridPx}
-        py={2}
-        bg={colors.backgroundDark}
-        opacity={loading ? 0.8 : 1}
-      >
-        <GridItem area="token" color={colors.textSecondary} fontWeight={500} fontSize={sizes.tokenSymbol}>
+          columnGap={[2, 4]}
+          alignItems="center"
+          pointerEvents={disableTotalInputByMask ? 'none' : 'initial'}
+          width={width}
+          sx={sx}
+          rounded={12}
+          px={sizes.downerUpperGridPx}
+          py={2}
+          bg={colors.backgroundDark}
+          opacity={loading ? 0.8 : 1}
+        >
+          <GridItem area="token" color={colors.textSecondary} fontWeight={500} fontSize={sizes.tokenSymbol}>
+            <HStack
+              bg={disableSelectToken ? undefined : colors.backgroundLight}
+              rounded={disableSelectToken ? undefined : 12}
+              px={disableSelectToken ? undefined : 3}
+              py={disableSelectToken ? undefined : 2.5}
+              cursor={disableSelectToken ? undefined : 'pointer'}
+              onClick={disableSelectToken ? undefined : onOpen}
+            >
+              {hideTokenIcon ? null : (
+                <TokenAvatar token={token} size={disableSelectToken ? sizes.disableSelectTokenIconSize : sizes.tokenIcon} />
+              )}
+              <Text color={isLight ? colors.secondary : colors.textPrimary}>{token?.symbol || ' '}</Text>
+              {disableSelectToken ? undefined : <ChevronDownIcon width={20} height={20} />}
+            </HStack>
+          </GridItem>
+
+          <GridItem area="input" color={colors.textPrimary} fontWeight={500} fontSize={sizes.inputText}>
+            <InputGroup sx={{ width }}>
+              <Input
+                variant="number"
+                inputMode="decimal"
+                sx={{ '& input[inputmode=decimal]': { opacity: 1 } }}
+                onChange={(e) => {
+                  onChange?.(handleParseVal(e?.currentTarget?.value || ''))
+                }}
+                onFocus={handleFocus}
+                isDisabled={readonly || loading}
+                value={formatToRawLocaleStr(value)}
+                min={0}
+                width={width || '100%'}
+                opacity={loading ? 0.2 : 1}
+                id={id}
+                name={name}
+                textAlign="end"
+                fontWeight={500}
+                fontSize={sizes.inputText}
+                paddingX={0}
+                height="unset"
+                bg="transparent"
+                _focus={{ bg: 'transparent' }}
+                _hover={{ bg: 'transparent' }}
+                _active={{ bg: 'transparent' }}
+              />
+            </InputGroup>
+          </GridItem>
+
+          <GridItem area="price" color={colors.textTertiary} fontSize={sizes.opacityVolume}>
+            <Text textAlign="right">~{formatCurrency(totalPrice, { symbol: '$', maximumDecimalTrailingZeroes: 5 })}</Text>
+          </GridItem>
+        </Grid>
+      }
+
+      {colorMode !== "dark"
+        &&
+        <Box>
           <HStack
-            bg={disableSelectToken ? undefined : colors.backgroundLight}
+            bg={disableSelectToken ? undefined : colors.backgroundDark}
             rounded={disableSelectToken ? undefined : 12}
-            px={disableSelectToken ? undefined : 3}
+            px={disableSelectToken ? undefined : 5}
             py={disableSelectToken ? undefined : 2.5}
             cursor={disableSelectToken ? undefined : 'pointer'}
             onClick={disableSelectToken ? undefined : onOpen}
@@ -406,42 +502,51 @@ function TokenInput(props: TokenInputProps) {
             <Text color={isLight ? colors.secondary : colors.textPrimary}>{token?.symbol || ' '}</Text>
             {disableSelectToken ? undefined : <ChevronDownIcon width={20} height={20} />}
           </HStack>
-        </GridItem>
-
-        <GridItem area="input" color={colors.textPrimary} fontWeight={500} fontSize={sizes.inputText}>
-          <InputGroup sx={{ width }}>
-            <Input
-              variant="number"
-              inputMode="decimal"
-              sx={{ '& input[inputmode=decimal]': { opacity: 1 } }}
-              onChange={(e) => {
-                onChange?.(handleParseVal(e?.currentTarget?.value || ''))
-              }}
-              onFocus={handleFocus}
-              isDisabled={readonly || loading}
-              value={formatToRawLocaleStr(value)}
-              min={0}
-              width={width || '100%'}
-              opacity={loading ? 0.2 : 1}
-              id={id}
-              name={name}
-              textAlign="end"
-              fontWeight={500}
-              fontSize={sizes.inputText}
-              paddingX={0}
-              height="unset"
-              bg="transparent"
-              _focus={{ bg: 'transparent' }}
-              _hover={{ bg: 'transparent' }}
-              _active={{ bg: 'transparent' }}
-            />
-          </InputGroup>
-        </GridItem>
-
-        <GridItem area="price" color={colors.textTertiary} fontSize={sizes.opacityVolume}>
-          <Text textAlign="right">~{formatCurrency(totalPrice, { symbol: '$', maximumDecimalTrailingZeroes: 5 })}</Text>
-        </GridItem>
-      </Grid>
+          <Box px={5}>
+            <InputGroup sx={{ width }}>
+              <Input
+                variant="number"
+                inputMode="decimal"
+                sx={{ '& input[inputmode=decimal]': { opacity: 1 } }}
+                onChange={(e) => {
+                  onChange?.(handleParseVal(e?.currentTarget?.value || ''))
+                }}
+                onFocus={handleFocus}
+                isDisabled={readonly || loading}
+                value={formatToRawLocaleStr(value)}
+                min={0}
+                width={width || '100%'}
+                opacity={loading ? 0.2 : 1}
+                id={id}
+                name={name}
+                textAlign="start"
+                fontWeight={500}
+                fontSize={sizes.inputText}
+                paddingX={0}
+                height="unset"
+                bg="transparent"
+                _focus={{ bg: 'transparent' }}
+                _hover={{ bg: 'transparent' }}
+                _active={{ bg: 'transparent' }}
+              />
+            </InputGroup>
+            <Flex justifyContent={"space-between"} pb={3}>
+              <Box color={colors.textTertiary} fontSize={sizes.opacityVolume}>
+                <Text textAlign="left">~{formatCurrency(totalPrice, { symbol: '$', maximumDecimalTrailingZeroes: 5 })}</Text>
+              </Box>
+              {(colorMode as ColorMode) !== "dark"
+                &&
+                <Button disabled={disableClickBalance} onClick={handleClickMax} variant="rect-rounded-radio" size="xs"
+                  background={(colorMode as ColorMode) !== "dark" ? "white" : ""}
+                  color={(colorMode as ColorMode) !== "dark" ? "black" : ""}
+                  rounded={(colorMode as ColorMode) !== "dark" ? "10px" : ""}>
+                  {t('input.max_button')}
+                </Button>
+              }
+            </Flex>
+          </Box>
+        </Box>
+      }
       <TokenSelectDialog isOpen={isOpen} onClose={onClose} onSelectValue={handleSelectToken} filterFn={filterFn} ref={tokenListRef} />
       {unknownToken !== undefined && (
         <TokenUnknownAddDialog

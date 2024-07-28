@@ -1,11 +1,13 @@
 import { useAppStore, PRIORITY_LEVEL_KEY, PRIORITY_MODE_KEY, PriorityLevel, PriorityMode } from '@/store/useAppStore'
 import { useCallback, useEffect } from 'react'
-import { Modal, ModalBody, ModalOverlay, ModalHeader, ModalContent, ModalFooter, Button } from '@chakra-ui/react'
+import { Modal, ModalBody, ModalOverlay, ModalHeader, ModalContent, ModalFooter, Button, useColorMode } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
 import { getStorageItem } from '@/utils/localStorage'
+import { colors } from '@/theme/cssVariables'
 
 export default function AppVersion() {
   const { t } = useTranslation()
+  const { colorMode } = useColorMode()
   const [checkAppVersionAct, needRefresh] = useAppStore((s) => [s.checkAppVersionAct, s.needRefresh])
 
   const onClose = useCallback(() => {
@@ -29,7 +31,11 @@ export default function AppVersion() {
   return (
     <Modal isOpen={needRefresh} onClose={onClose}>
       <ModalOverlay />
-      <ModalContent>
+      <ModalContent
+        background={colorMode !== "dark" ? colors.backgroundTransparent11 : colors.backgroundTransparent11}
+        border={colorMode !== "dark" ? colors.cardBorder02 : ""}
+        backdropFilter={colorMode !== "dark" ? colors.backDropFilter : ""}
+      >
         <ModalHeader>{t('common.app_version_available')}</ModalHeader>
         <ModalBody>{t('common.refresh_update')}</ModalBody>
         <ModalFooter mt="4" justifyContent="space-between" gap="2">

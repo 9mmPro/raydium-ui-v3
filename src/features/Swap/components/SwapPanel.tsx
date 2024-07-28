@@ -5,7 +5,7 @@ import { useEvent } from '@/hooks/useEvent'
 import { useHover } from '@/hooks/useHover'
 import { useAppStore, useTokenAccountStore, useTokenStore } from '@/store'
 import { colors } from '@/theme/cssVariables'
-import { Box, Button, Collapse, Flex, HStack, SimpleGrid, Text, useDisclosure, CircularProgress } from '@chakra-ui/react'
+import { Box, Button, Collapse, Flex, HStack, SimpleGrid, Text, useDisclosure, CircularProgress, useColorMode } from '@chakra-ui/react'
 import { ApiV3Token, RAYMint, SOL_INFO, TokenInfo } from '@raydium-io/raydium-sdk-v2'
 import { PublicKey } from '@solana/web3.js'
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -46,6 +46,7 @@ export function SwapPanel({
   const [defaultInput, defaultOutput] = [urlInputMint || cacheInput, urlOutputMint || cacheOutput]
 
   const { t, i18n } = useTranslation()
+  const { colorMode } = useColorMode()
   const { swap: swapDisabled } = useAppStore().featureDisabled
   const swapTokenAct = useSwapStore((s) => s.swapTokenAct)
   const unWrapSolAct = useSwapStore((s) => s.unWrapSolAct)
@@ -285,18 +286,23 @@ export function SwapPanel({
         />
         <SwapIcon onClick={handleChangeSide} />
         {/* output */}
-        <TokenInput
-          name="swap"
-          topLeftLabel={t('swap.to_label')}
-          ctrSx={getCtrSx('BaseOut')}
-          token={tokenOutput}
-          value={isSwapBaseIn ? outputAmount : amountIn}
-          readonly={swapDisabled || (isSwapBaseIn && isComputing)}
-          onChange={handleInput2Change}
-          filterFn={outputFilterFn}
-          onTokenChange={(token) => handleSelectToken(token, 'output')}
-          defaultUnknownToken={unknownTokenB}
-        />
+        <Box
+          background={colorMode !== "dark" ? "#7f7f7f33" : ""}
+          rounded={colorMode !== "dark" ? "18px" : ""}
+        >
+          <TokenInput
+            name="swap"
+            topLeftLabel={t('swap.to_label')}
+            ctrSx={getCtrSx('BaseOut')}
+            token={tokenOutput}
+            value={isSwapBaseIn ? outputAmount : amountIn}
+            readonly={swapDisabled || (isSwapBaseIn && isComputing)}
+            onChange={handleInput2Change}
+            filterFn={outputFilterFn}
+            onTokenChange={(token) => handleSelectToken(token, 'output')}
+            defaultUnknownToken={unknownTokenB}
+          />
+        </Box>
       </Flex>
       {/* swap info */}
       <Collapse in={hasValidAmountOut} animateOpacity>
@@ -324,8 +330,8 @@ export function SwapPanel({
           mt="-2"
           mb="3"
           fontSize="sm"
-          bg={'rgba(255, 78, 163,0.1)'}
-          color={colors.semanticError}
+          bg={colors.semanticBackgroundError2}
+          color={colors.semanticError2}
           alignItems="start"
           justifyContent="center"
         >
@@ -347,7 +353,7 @@ export function SwapPanel({
           gap="1"
           color={colors.textSecondary}
         >
-          <CircleInfo />
+          <CircleInfo stroke={colors.secondary} />
           <Trans
             i18nKey={'swap.unwrap_wsol_info'}
             values={{
@@ -401,18 +407,19 @@ function SwapIcon(props: { onClick?: () => void }) {
   return (
     <SimpleGrid
       ref={targetElement}
-      bg={isHover ? colors.semanticFocus : undefined}
+      bg={isHover ? colors.semanticFocus : "#24242470"}
       width="42px"
       height="42px"
       placeContent="center"
       rounded="full"
       cursor="pointer"
       my={-3}
+      p={6}
       mx="auto"
       zIndex={2}
       onClick={props.onClick}
     >
-      {isHover ? <SwapButtonTwoTurnIcon /> : <SwapButtonOneTurnIcon />}
+      {isHover ? <SwapButtonTwoTurnIcon color={colors.semanticFocus} /> : <SwapButtonOneTurnIcon color={colors.semanticFocus} />}
     </SimpleGrid>
   )
 }

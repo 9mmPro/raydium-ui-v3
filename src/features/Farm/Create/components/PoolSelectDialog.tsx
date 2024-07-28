@@ -12,7 +12,8 @@ import {
   ModalHeader,
   ModalOverlay,
   Skeleton,
-  Text
+  Text,
+  useColorMode
 } from '@chakra-ui/react'
 import { ApiV3Token, PoolFetchType } from '@raydium-io/raydium-sdk-v2'
 import { useCallback, useState } from 'react'
@@ -40,6 +41,7 @@ export default function PoolSelectDialog(props: PoolSelectDialogProps) {
   const { t } = useTranslation()
   const { poolType = PoolFetchType.All, onSelectValue, isOpen, onClose } = props
   const [searchText, setSearchText] = useState('')
+  const { colorMode } = useColorMode()
   const [searchTokens, setSearchTokens] = useState<ApiV3Token[]>([])
 
   const { formattedData: data, isLoading: isMintSearchLoading } = useFetchPoolByMint({
@@ -75,7 +77,11 @@ export default function PoolSelectDialog(props: PoolSelectDialogProps) {
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="lg">
       <ModalOverlay />
-      <ModalContent>
+      <ModalContent
+        background={colorMode !== "dark" ? colors.backgroundTransparent11 : colors.backgroundTransparent11}
+        border={colorMode !== "dark" ? colors.cardBorder02 : ""}
+        backdropFilter={colorMode !== "dark" ? colors.backDropFilter : ""}
+      >
         <ModalHeader>{t('input.search_amm_title')}</ModalHeader>
         <ModalCloseButton top="25px" />
         <ModalBody mt="10px">

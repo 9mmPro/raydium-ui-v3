@@ -50,12 +50,12 @@ export function SwapInfoBoard({
   return (
     <Box
       position="relative"
-      boxShadow={isHighRiskPrice ? `0px 0px 12px 6px rgba(255, 78, 163, 0.15)` : 'none'}
-      bg={isHighRiskPrice ? 'rgba(255, 78, 163,0.1)' : colors.backgroundTransparent07}
+      boxShadow={isHighRiskPrice ? `0px 0px 12px 6px #17040440` : 'none'}
+      bg={isHighRiskPrice ? colors.semanticBackgroundError : colors.backgroundTransparent07}
       borderWidth="1px"
       borderStyle="solid"
       borderColor={isHighRiskPrice ? colors.semanticError : colors.backgroundTransparent12}
-      rounded="md"
+      rounded="25px"
       px={4}
       pt={1.5}
       pb={2}
@@ -144,26 +144,26 @@ function PriceDetector({
     ? computedSwapResult.priceImpactPct > 5
       ? 'high'
       : computedSwapResult.priceImpactPct > 1
-      ? 'warning'
-      : 'low'
+        ? 'warning'
+        : 'low'
     : undefined
 
   let price = computedSwapResult
     ? trimTrailZero(
-        new Decimal(computedSwapResult.outputAmount)
-          .div(10 ** (tokenOutput?.decimals || 0))
-          .div(new Decimal(computedSwapResult.inputAmount).div(10 ** (tokenInput?.decimals || 0)))
-          .toFixed(tokenOutput?.decimals || 0, Decimal.ROUND_FLOOR)
-      )!
+      new Decimal(computedSwapResult.outputAmount)
+        .div(10 ** (tokenOutput?.decimals || 0))
+        .div(new Decimal(computedSwapResult.inputAmount).div(10 ** (tokenInput?.decimals || 0)))
+        .toFixed(tokenOutput?.decimals || 0, Decimal.ROUND_FLOOR)
+    )!
     : ''
   if (reverse)
     price =
       price === ''
         ? price
         : new Decimal(1)
-            .div(price)
-            .toDecimalPlaces(tokenInput?.decimals || 0, Decimal.ROUND_FLOOR)
-            .toString()
+          .div(price)
+          .toDecimalPlaces(tokenInput?.decimals || 0, Decimal.ROUND_FLOOR)
+          .toString()
 
   return (
     <HStack>
@@ -257,8 +257,8 @@ function MinimumReceiveValue({ tokenOutput, amount }: { tokenOutput?: TokenInfo;
       <Text color={colors.textPrimary}>
         {amount && tokenOutput
           ? formatCurrency(new Decimal(amount).div(10 ** tokenOutput.decimals).toFixed(tokenOutput.decimals, Decimal.ROUND_FLOOR), {
-              decimalPlaces: tokenOutput?.decimals
-            })
+            decimalPlaces: tokenOutput?.decimals
+          })
           : formatCurrency(amount)}
       </Text>
       <Text color={colors.textSecondary}>{tokenOutput?.symbol}</Text>

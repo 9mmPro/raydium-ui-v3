@@ -25,7 +25,8 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  Text
+  Text,
+  useColorMode
 } from '@chakra-ui/react'
 import { ApiV3PoolInfoConcentratedItem } from '@raydium-io/raydium-sdk-v2'
 import IntervalCircle, { IntervalCircleHandler } from '@/components/IntervalCircle'
@@ -57,6 +58,7 @@ export default function RemoveLiquidityModal({
   initRpcPoolData?: RpcPoolData
 }) {
   const { t } = useTranslation()
+  const { colorMode } = useColorMode()
   const featureDisabled = useAppStore((s) => s.featureDisabled.removeConcentratedPosition)
   const removeLiquidityAct = useClmmStore((s) => s.removeLiquidityAct)
   const { getPriceAndAmount } = useClmmBalance({})
@@ -189,7 +191,11 @@ export default function RemoveLiquidityModal({
   return (
     <Modal isOpen={isOpen} onClose={handleCloseModal} size="lg">
       <ModalOverlay />
-      <ModalContent>
+      <ModalContent
+        background={colorMode !== "dark" ? colors.backgroundTransparent11 : colors.backgroundTransparent11}
+        border={colorMode !== "dark" ? colors.cardBorder02 : ""}
+        backdropFilter={colorMode !== "dark" ? colors.backDropFilter : ""}
+      >
         <ModalHeader display={'flex'} gap="2" alignItems="center">
           {t('clmm.modal_header_remove_liquidity')}
         </ModalHeader>

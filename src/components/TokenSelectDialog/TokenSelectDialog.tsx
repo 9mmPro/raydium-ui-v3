@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { useEvent } from '@/hooks/useEvent'
 import ChevronLeftIcon from '@/icons/misc/ChevronLeftIcon'
 import { colors } from '@/theme/cssVariables'
-import { Box, Grid, GridItem, Heading, Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay } from '@chakra-ui/react'
+import { Box, Grid, GridItem, Heading, Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay, useColorMode } from '@chakra-ui/react'
 import TokenListSetting from './components/TokenListSetting'
 import TokenList, { TokenListHandles } from './components/TokenList'
 import TokenListUnknown from './components/TokenListUnknown'
@@ -27,6 +27,7 @@ export default forwardRef<TokenListHandles, TokenSelectDialogProps>(function Tok
   ref
 ) {
   const { t } = useTranslation()
+  const { colorMode } = useColorMode()
   const [currentPage, setCurrentPage] = useState<PageType>(PageType.TokenList)
 
   const renderModalContent = useCallback(() => {
@@ -121,7 +122,11 @@ export default forwardRef<TokenListHandles, TokenSelectDialogProps>(function Tok
   return (
     <Modal variant={'mobileFullPage'} isOpen={isOpen} onClose={handleClose} onCloseComplete={onCloseComplete}>
       <ModalOverlay />
-      <ModalContent>{renderModalContent()}</ModalContent>
+      <ModalContent
+        background={colorMode !== "dark" ? colors.backgroundTransparent11 : colors.backgroundTransparent11}
+        border={colorMode !== "dark" ? colors.cardBorder02 : ""}
+        backdropFilter={colorMode !== "dark" ? colors.backDropFilter : ""}
+      >{renderModalContent()}</ModalContent>
     </Modal>
   )
 })

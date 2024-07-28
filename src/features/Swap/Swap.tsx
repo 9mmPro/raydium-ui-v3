@@ -1,4 +1,4 @@
-import { Box, Grid, GridItem, HStack, VStack, useClipboard } from '@chakra-ui/react'
+import { Box, Grid, GridItem, HStack, VStack, useClipboard, useColorMode } from '@chakra-ui/react'
 import { RAYMint, SOLMint } from '@raydium-io/raydium-sdk-v2'
 import { PublicKey } from '@solana/web3.js'
 import { useMemo, useState, useRef, useEffect } from 'react'
@@ -25,9 +25,15 @@ import { getMintPriority } from '@/utils/token'
 import Tooltip from '@/components/Tooltip'
 import { MoonpayBuy } from '@/components/Moonpay'
 import { toastSubject } from '@/hooks/toast/useGlobalToast'
+import DollarEmptyIcon from '@/icons/misc/DollarEmptyIcon'
+import Button from '@/components/Button'
+import LinkEmptyIcon from '@/icons/misc/LinkEmptyIcon'
+import SwapExchangeEmptyIcon from '@/icons/misc/SwapExchangeEmptyIcon'
+
 
 export default function Swap() {
   // const { inputMint: cacheInput, outputMint: cacheOutput } = getSwapPairCache()
+  const { colorMode } = useColorMode();
   const [inputMint, setInputMint] = useState<string>(PublicKey.default.toBase58())
   const [outputMint, setOutputMint] = useState<string>(RAYMint.toBase58())
   const [isPCChartShown, setIsPCChartShown] = useState<boolean>(true)
@@ -68,7 +74,9 @@ export default function Swap() {
       }
     }
   }, [cacheLoaded])
+
   // reset directionReverse when inputMint or outputMint changed
+
   useIsomorphicLayoutEffect(() => {
     if (!cacheLoaded) return
     if (isDirectionNeedReverse) {
@@ -110,7 +118,38 @@ export default function Swap() {
       mt={[0, getVHExpression([0, 800], [32, 1300])]}
       width={!isMobile && isPCChartShown ? 'min(100%, 1300px)' : undefined}
     >
-      <HStack alignSelf="flex-end" my={[1, 0]}>
+      <HStack alignSelf={isMobile || isPCChartShown ? `flex-end` : `flex-center`} my={[1, 0]}>
+        <MoonpayBuy>
+          {colorMode == "dark" ?
+            <DollarIcon />
+            :
+            <Button
+              size="xs"
+              height="fit-content"
+              py={2}
+              px={2}
+              borderRadius="full"
+              bg={colors.buttonBg01}
+              color={colors.textSecondary}
+              fontSize={'sm'}
+              fontWeight="normal"
+              border={'1px solid transparent'}
+              _hover={{
+                borderColor: colors.secondary,
+                color: colors.secondary,
+                bg: colors.buttonBg01,
+                '.chakra-icon-hover': {
+                  fill: colors.secondary
+                }
+              }}
+              _focus={{ boxShadow: 'outline' }}
+              iconSpacing={1}
+              variant={'ghost'}
+            >
+              <DollarEmptyIcon />
+            </Button>
+          }
+        </MoonpayBuy>
         <SlippageAdjuster />
         <Tooltip
           label={t('swap.blink_referral_desc', {
@@ -130,12 +169,38 @@ export default function Swap() {
               }
             }}
           >
-            <LinkIcon />
+            {colorMode == "dark" ?
+              <LinkIcon />
+              :
+              <Button
+                size="xs"
+                height="fit-content"
+                py={2}
+                px={2}
+                borderRadius="full"
+                bg={colors.buttonBg01}
+                color={colors.textSecondary}
+                fontSize={'sm'}
+                fontWeight="normal"
+                border={'1px solid transparent'}
+                _hover={{
+                  borderColor: colors.secondary,
+                  color: colors.secondary,
+                  bg: colors.buttonBg01,
+                  '.chakra-icon-hover': {
+                    fill: colors.secondary
+                  }
+                }}
+                _focus={{ boxShadow: 'outline' }}
+                iconSpacing={1}
+                variant={'ghost'}
+              >
+                <LinkEmptyIcon />
+              </Button>
+            }
           </Box>
         </Tooltip>
-        <MoonpayBuy>
-          <DollarIcon />
-        </MoonpayBuy>
+
 
         {!isMobile && isPCChartShown && (
           <Box
@@ -144,7 +209,11 @@ export default function Swap() {
               setIsChartLeft((b) => !b)
             }}
           >
-            <SwapExchangeIcon />
+            {colorMode == "dark" ? (
+              <SwapExchangeIcon />
+            ) : (
+              <SwapExchangeEmptyIcon />
+            )}
           </Box>
         )}
         <Box
@@ -157,7 +226,7 @@ export default function Swap() {
             }
           }}
         >
-          {isMobile || isPCChartShown ? (
+          {colorMode == "dark" ? (
             <SwapChatIcon />
           ) : (
             <Box color={colors.textSecondary}>
@@ -178,7 +247,12 @@ export default function Swap() {
         gap={[3, isPCChartShown ? 4 : 0]}
       >
         <GridItem ref={swapPanelRef} gridArea="panel">
-          <PanelCard p={[3, 6]} flexGrow={['1', 'unset']}>
+          <PanelCard p={[3, 6]}
+            flexGrow={['1', 'unset']}
+            background={colorMode !== "dark" ? "#FFFFFF0F" : ""}
+            border={colorMode !== "dark" ? "1px solid #FFFFFF33" : ""}
+            backdropFilter={colorMode !== "dark" ? "blur(5px)" : ""}
+          >
             <SwapPanel
               onInputMintChange={setInputMint}
               onOutputMintChange={setOutputMint}
@@ -188,7 +262,11 @@ export default function Swap() {
         </GridItem>
 
         <GridItem gridArea="kline" {...(isMobile ? { mb: 3 } : {})}>
-          <PanelCard ref={klineRef} p={[3, 3]} gap={4} height="100%" {...(isMobile || !isPCChartShown ? { display: 'none' } : {})}>
+          <PanelCard ref={klineRef} p={[3, 3]} gap={4} height="100%" {...(isMobile || !isPCChartShown ? { display: 'none' } : {})}
+            background={colorMode !== "dark" ? "#FFFFFF0F" : ""}
+            border={colorMode !== "dark" ? "1px solid #FFFFFF33" : ""}
+            backdropFilter={colorMode !== "dark" ? "blur(5px)" : ""}
+          >
             <SwapKlinePanel
               untilDate={untilDate.current}
               baseToken={baseToken}
@@ -211,8 +289,8 @@ export default function Swap() {
                 untilDate={untilDate.current}
                 baseToken={baseToken}
                 quoteToken={quoteToken}
-                // onDirectionToggle={() => setDirectionReverse((b) => !b)}
-                // onTimeTypeChange={setSelectedTimeType}
+              // onDirectionToggle={() => setDirectionReverse((b) => !b)}
+              // onTimeTypeChange={setSelectedTimeType}
               />
               <SwapKlinePanelMobileDrawer
                 untilDate={untilDate.current}

@@ -11,7 +11,8 @@ import {
   ModalHeader,
   ModalOverlay,
   ModalFooter,
-  useClipboard
+  useClipboard,
+  useColorMode
 } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { useTranslation, Trans } from 'react-i18next'
@@ -25,6 +26,7 @@ import { useAppStore, supportedExplorers } from '@/store/useAppStore'
 export default function DepositedNFTModal({ nftAddress, isOpen, onClose }: { nftAddress: string; isOpen: boolean; onClose: () => void }) {
   const router = useRouter()
   const { t } = useTranslation()
+  const { colorMode } = useColorMode()
   const explorerUrl = useAppStore((s) => s.explorerUrl)
   const { onCopy, setValue } = useClipboard(nftAddress)
 
@@ -35,7 +37,11 @@ export default function DepositedNFTModal({ nftAddress, isOpen, onClose }: { nft
   return (
     <Modal size="xl" isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
-      <ModalContent sx={{ bg: 'rgba(28, 36, 62, 1)' }}>
+      <ModalContent sx={{ bg: 'rgba(28, 36, 62, 1)' }}
+        background={colorMode !== "dark" ? colors.backgroundTransparent11 : colors.backgroundTransparent11}
+        border={colorMode !== "dark" ? colors.cardBorder02 : ""}
+        backdropFilter={colorMode !== "dark" ? colors.backDropFilter : ""}
+      >
         <ModalHeader mb="5" fontSize="xl">
           {t('clmm.deposit_successful')}
         </ModalHeader>

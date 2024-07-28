@@ -18,7 +18,8 @@ import {
   ModalOverlay,
   Text,
   VStack,
-  useDisclosure
+  useDisclosure,
+  useColorMode
 } from '@chakra-ui/react'
 import { ApiV3Token, TokenInfo } from '@raydium-io/raydium-sdk-v2'
 import dayjs from 'dayjs'
@@ -46,6 +47,7 @@ export default function AddAnotherRewardDialog({
   onClose(): void
 }) {
   const { t } = useTranslation()
+  const { colorMode } = useColorMode()
   const chainTimeOffset = useAppStore((s) => s.chainTimeOffset)
   const getTokenBalanceUiAmount = useTokenAccountStore((s) => s.getTokenBalanceUiAmount)
   const onlineCurrentDate = Date.now() + chainTimeOffset
@@ -106,7 +108,11 @@ export default function AddAnotherRewardDialog({
       size={'2xl'}
     >
       <ModalOverlay />
-      <ModalContent>
+      <ModalContent
+        background={colorMode !== "dark" ? colors.backgroundTransparent11 : colors.backgroundTransparent11}
+        border={colorMode !== "dark" ? colors.cardBorder02 : ""}
+        backdropFilter={colorMode !== "dark" ? colors.backDropFilter : ""}
+      >
         <ModalHeader>{t('edit_farm.modal_add_another_token')}</ModalHeader>
         <ModalCloseButton />
 

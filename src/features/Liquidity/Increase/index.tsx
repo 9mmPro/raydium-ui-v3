@@ -1,7 +1,7 @@
 import { ReactNode, useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Box, Grid, GridItem, HStack, Text, TooltipProps, VStack } from '@chakra-ui/react'
-import { ApiV3PoolInfoStandardItem, ApiV3Token, TokenInfo, CREATE_CPMM_POOL_PROGRAM, PoolFetchType } from '@raydium-io/raydium-sdk-v2'
+import { ApiV3PoolInfoStandardItem, ApiV3Token, TokenInfo, CREATE_CPMM_POOL_PROGRAM } from '@raydium-io/raydium-sdk-v2'
 import Decimal from 'decimal.js'
 
 import Tabs, { TabItem } from '@/components/Tabs'
@@ -23,7 +23,6 @@ import PoolInfo from './components/PoolInfo'
 import PositionBalance from './components/PositionBalance'
 import StakeableHint from './components/StakeableHint'
 import useFetchFarmByLpMint from '@/hooks/farm/useFetchFarmByLpMint'
-import useFetchPoolList from '@/hooks/pool/useFetchPoolList'
 
 export type IncreaseLiquidityPageQuery = {
   pool_id?: string
@@ -51,37 +50,12 @@ export default function Increase() {
   const { lpBasedData } = useFarmPositions({})
 
   const [tokenPair, setTokenPair] = useState<{ base?: ApiV3Token; quote?: ApiV3Token }>({})
-const  [orgData, setOrgData] = useState<any>()
-const  [orgLoadMore, setOrgLoadMore] = useState<any>()
-const [  isOrgLoadedEnd, setIsOrgLoadedEnd]= useState<any>()
-const [ isOrgLoading, setIsOrgLoading]  = useState<any>()
 
-useEffect(()=>{
-  async function woot(){
-    var {
-      formattedData: orgData,
-      loadMore: orgLoadMore,
-      isLoadEnded: isOrgLoadedEnd,
-      isLoading: isOrgLoading
-    } = 
-  await useFetchPoolList({
-    showFarms: false,
-    shouldFetch: false,
-    type: PoolFetchType.Standard,
-    order: 'desc',
-    sort: 'default' 
+  const { formattedData, isLoading, mutate } = useFetchPoolById<ApiV3PoolInfoStandardItem>({
+    shouldFetch: Boolean(urlPoolId),
+    idList: [urlPoolId]
   })
-  setOrgData(orgData)
-  
-  setOrgLoadMore(orgLoadMore)
-  setIsOrgLoadedEnd(isOrgLoadedEnd)
-  setIsOrgLoading(isOrgLoading)
-
-}
-woot()
-}, [])
-
-  const pool = orgData?.[0]
+  const pool = formattedData?.[0]
 
   const isCpmm = pool && pool.programId === CREATE_CPMM_POOL_PROGRAM.toBase58()
   const { data: rpcAmmData, mutate: mutateAmm } = useFetchRpcPoolData({
@@ -101,7 +75,7 @@ woot()
     shouldFetch: !!pool && pool.farmOngoingCount === 0,
     poolLp: pool?.lpMint.address
   })
-  const isPoolNotFound = !!tokenPair.base && !!tokenPair.quote && !isOrgLoading && !pool
+  const isPoolNotFound = !!tokenPair.base && !!tokenPair.quote && !isLoading && !pool
 
   const lpBalance = getTokenBalanceUiAmount({
     mint: pool?.lpMint.address || '',
@@ -122,6 +96,7 @@ woot()
   const [mode, setMode] = useState<LiquidityActionModeType>('add')
 
   const handleRefresh = useEvent(() => {
+    mutate()
     fetchTokenAccountAct({})
   })
 
@@ -197,7 +172,7 @@ woot()
               {mode === 'add' ? (
                 <AddLiquidity
                   pool={pool}
-                  isLoading={isOrgLoading}
+                  isLoading={isLoading}
                   poolNotFound={isPoolNotFound}
                   rpcData={rpcData}
                   mutate={mutateRpc}
@@ -210,7 +185,7 @@ woot()
                 />
               ) : null}
 
-              {mode === 'stake' ? <Stake poolInfo={pool} disabled={!isOrgLoading && !hasFarmInfo} onRefresh={handleRefresh} /> : null}
+              {mode === 'stake' ? <Stake poolInfo={pool} disabled={!isLoading && !hasFarmInfo} onRefresh={handleRefresh} /> : null}
             </Box>
           </VStack>
         </GridItem>

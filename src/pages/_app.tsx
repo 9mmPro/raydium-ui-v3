@@ -53,11 +53,11 @@ const MyApp = ({ Component, pageProps, lng, ...props }: AppProps & { lng: string
         <meta property="og:url" content="https://raydium.io/" />
         <meta property="og:type" content="website" />
         <meta property="og:image" content="https://img-v1.raydium.io/share/7be7ee6c-56b2-451e-a010-6c21e0db2ee5.png" />
-        <meta property="og:image:alt" content="Raydium" />
+        <meta property="og:image:alt" content="9mm" />
         <meta property="og:locale" content="en" />
-        <meta property="og:site_name" content="Raydium" />
-        <meta property="og:title" content="Swap | Raydium" />
-        <title>{pageProps.title ? `${pageProps.title} Raydium` : 'Raydium'}</title>
+        <meta property="og:site_name" content="9mm" />
+        <meta property="og:title" content="Swap | 9mm" />
+        <title>{pageProps.title ? `${pageProps.title} 9mm` : '(9mm)'}</title>
       </Head>
       <DynamicProviders>
         <DynamicContent {...props}>

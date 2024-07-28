@@ -59,7 +59,6 @@ import { getFavoritePoolCache, POOL_SORT_KEY } from './util'
 import i18n from '@/i18n'
 import { setUrlQuery, useRouteQuery } from '@/utils/routeTools'
 import { urlToMint, mintToUrl } from '@/utils/token'
-import { poolInfoCache } from '@/hooks/pool/formatter'
 
 export type PoolPageQuery = {
   token?: string
@@ -235,40 +234,18 @@ export default function Pools() {
 
   const search = searchTokens.reduce((acc, cur) => acc + ',' + cur.address, '')
   const hasSearch = searchTokens.length > 0
-  const  [orgData, setOrgData] = useState<any>()
-  const  [orgLoadMore, setOrgLoadMore] = useState<any>()
-  const [  isOrgLoadedEnd, setIsOrgLoadedEnd]= useState<any>()
-  const [ isOrgLoading, setIsOrgLoading]  = useState<any>()
-  
-  useEffect(()=>{
-    async function woot(){
-      var {
-        formattedData: orgData,
-        loadMore: orgLoadMore,
-        isLoadEnded: isOrgLoadedEnd,
-        isLoading: isOrgLoading
-      } = 
-    await useFetchPoolList({
-      showFarms,
-      shouldFetch: !hasSearch,
-      type: activeTabItem.value,
-      order: order ? 'desc' : 'asc',
-      sort: sortKey !== 'liquidity' && sortKey !== 'default' ? `${sortKey}${timeBase}` : sortKey
-    })
-    setOrgData(orgData)
-    
-    setOrgLoadMore(orgLoadMore)
-    setIsOrgLoadedEnd(isOrgLoadedEnd)
-    setIsOrgLoading(isOrgLoading)
-
-  }
-  woot()
-  }, [])
-  
-  useEffect(() => {
-    if (orgData) orgData.forEach((d:any) => poolInfoCache.set(d.id, d))
-  }, [orgData])
-
+  const {
+    formattedData: orgData,
+    loadMore: orgLoadMore,
+    isLoadEnded: isOrgLoadedEnd,
+    isLoading: isOrgLoading
+  } = useFetchPoolList({
+    showFarms,
+    shouldFetch: !hasSearch,
+    type: activeTabItem.value,
+    order: order ? 'desc' : 'asc',
+    sort: sortKey !== 'liquidity' && sortKey !== 'default' ? `${sortKey}${timeBase}` : sortKey
+  })
 
   const {
     formattedData: searchMintData,
@@ -296,14 +273,12 @@ export default function Pools() {
   const data = hasSearch || searchIdData?.length ? searchData : orgData
   const isLoading = hasSearch ? isSearchLoading : isOrgLoading
   const isLoadEnded = hasSearch ? isSearchLoadEnded : isOrgLoadedEnd
-  const loadMore = hasSearch ? () => {} : orgLoadMore
+  const loadMore = hasSearch ? () => { } : orgLoadMore
   const sortedData = useMemo(() => {
-    if (!data) return []
     // if (!favoritePools.size) return data
     const favorite: FormattedPoolInfoItem[] = []
     const normal: FormattedPoolInfoItem[] = []
-    
-    data.forEach((p: any) => {
+    data.forEach((p) => {
       if (favoritePools.has(p.id)) return favorite.push(p)
       normal.push(p)
     })
@@ -581,6 +556,7 @@ export default function Pools() {
                 getItemKey={(item) => item.id}
                 gap={currentLayoutStyle === 'grid' ? gridCardGap : undefined}
                 zIndex={1}
+              
               >
                 {renderPoolListItem}
               </List>

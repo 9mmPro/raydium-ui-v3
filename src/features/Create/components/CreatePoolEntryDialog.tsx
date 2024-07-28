@@ -24,7 +24,8 @@ import {
   ModalOverlay,
   Stack,
   Text,
-  VStack
+  VStack,
+  useColorMode
 } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -63,7 +64,8 @@ export function CreatePoolEntryDialog({
           <CreatePoolEntryDialogBody type={type} onChange={setType} />
         </CreatePoolEntryMobileDrawer>
       </Mobile>
-      <Desktop>
+      <Desktop
+      >
         <CreatePoolEntryModal isOpen={isOpen} onClose={onClose} onConfirm={onConfirm}>
           <CreatePoolEntryDialogBody type={type} onChange={setType} />
         </CreatePoolEntryModal>
@@ -82,10 +84,15 @@ type CreatePoolEntryModalProps = {
 
 function CreatePoolEntryModal({ isOpen, onClose, onConfirm, children }: CreatePoolEntryModalProps) {
   const { t } = useTranslation()
+  const { colorMode } = useColorMode()
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
-      <ModalContent>
+      <ModalContent
+        background={colorMode !== "dark" ? colors.backgroundTransparent11 : colors.backgroundTransparent11}
+        border={colorMode !== "dark" ? colors.cardBorder02 : ""}
+        backdropFilter={colorMode !== "dark" ? colors.backDropFilter : ""}
+      >
         <ModalHeader>{t('create_pool.modal_title')}</ModalHeader>
         <ModalCloseButton />
 
@@ -160,20 +167,20 @@ export function CreatePoolEntryDialogBody({ type, onChange }: { type: CreateTarg
         renderPoolType={
           type === 'concentrated-liquidity' || type === 'standard-amm'
             ? () => (
-                <Stack flexDirection={['column', 'row']}>
-                  <PoolTypeItem
-                    isSuggested
-                    isActive={type === 'concentrated-liquidity'}
-                    name={t('create_pool.modal_tab_concentrated')}
-                    onClickSelf={() => onChange('concentrated-liquidity')}
-                  />
-                  <PoolTypeItem
-                    isActive={type === 'standard-amm'}
-                    name={t('create_pool.modal_tab_standard_amm')}
-                    onClickSelf={() => onChange('standard-amm')}
-                  />
-                </Stack>
-              )
+              <Stack flexDirection={['column', 'row']}>
+                <PoolTypeItem
+                  isSuggested
+                  isActive={type === 'concentrated-liquidity'}
+                  name={t('create_pool.modal_tab_concentrated')}
+                  onClickSelf={() => onChange('concentrated-liquidity')}
+                />
+                <PoolTypeItem
+                  isActive={type === 'standard-amm'}
+                  name={t('create_pool.modal_tab_standard_amm')}
+                  onClickSelf={() => onChange('standard-amm')}
+                />
+              </Stack>
+            )
             : undefined
         }
         onClick={() => onChange('concentrated-liquidity')}

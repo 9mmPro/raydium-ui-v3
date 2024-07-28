@@ -32,8 +32,8 @@ export function SlippageAdjuster({ variant = 'swap', onClick }: { variant?: 'swa
         <Button
           size="xs"
           height="fit-content"
-          py={1}
-          px={2}
+          py={2}
+          px={3}
           borderRadius="full"
           bg={isWarn ? colors.warnButtonBg : colors.buttonBg01}
           color={isWarn ? colors.semanticWarning : colors.textSecondary}

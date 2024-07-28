@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { Modal, ModalOverlay, ModalContent, ModalFooter, ModalBody, Flex, Text, useDisclosure, useClipboard } from '@chakra-ui/react'
+import { Modal, ModalOverlay, ModalContent, ModalFooter, ModalBody, Flex, Text, useDisclosure, useClipboard, useColorMode } from '@chakra-ui/react'
 import { routeToPage } from '@/utils/routeTools'
 import Button from '@/components/Button'
 import { colors } from '@/theme/cssVariables'
@@ -13,6 +13,7 @@ interface Props {
 
 export default function CreateSuccessModal({ ammId }: Props) {
   const { isOpen, onClose } = useDisclosure({ isOpen: true })
+  const { colorMode } = useColorMode()
   const { onCopy, setValue, hasCopied, value } = useClipboard(ammId)
 
   useEffect(() => {
@@ -27,7 +28,11 @@ export default function CreateSuccessModal({ ammId }: Props) {
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
-      <ModalContent>
+      <ModalContent
+        background={colorMode !== "dark" ? colors.backgroundTransparent11 : colors.backgroundTransparent11}
+        border={colorMode !== "dark" ? colors.cardBorder02 : ""}
+        backdropFilter={colorMode !== "dark" ? colors.backDropFilter : ""}
+      >
         <ModalBody p="4">
           <Flex flexDirection="column" alignItems="center">
             <CircleCheck width={32} height={32} color={colors.secondary} />
