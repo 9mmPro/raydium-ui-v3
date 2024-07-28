@@ -14,7 +14,8 @@ import {
   ModalOverlay,
   Spacer,
   Text,
-  VStack
+  VStack,
+  useColorMode
 } from '@chakra-ui/react'
 import { ApiV3Token, wSolToSolToken } from '@raydium-io/raydium-sdk-v2'
 import Button from '@/components/Button'
@@ -51,6 +52,7 @@ export default function AdjustRewardDialog({
   onClose?(): void
 }) {
   const { t } = useTranslation()
+  const { colorMode } = useColorMode()
   const chainTimeOffset = useAppStore((s) => s.chainTimeOffset)
   const getTokenBalanceUiAmount = useTokenAccountStore((s) => s.getTokenBalanceUiAmount)
 
@@ -124,7 +126,11 @@ export default function AdjustRewardDialog({
       size="2xl"
     >
       <ModalOverlay />
-      <ModalContent>
+      <ModalContent
+        background={colorMode !== "dark" ? colors.backgroundTransparent11 : colors.backgroundTransparent11}
+        border={colorMode !== "dark" ? colors.cardBorder02 : ""}
+        backdropFilter={colorMode !== "dark" ? colors.backDropFilter : ""}
+      >
         <ModalHeader>{t('edit_farm.box_header_adjust_rewards')}</ModalHeader>
         <ModalCloseButton />
 

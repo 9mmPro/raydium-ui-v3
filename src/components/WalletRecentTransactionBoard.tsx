@@ -17,7 +17,8 @@ import {
   StyleProps,
   Text,
   VStack,
-  useDisclosure
+  useDisclosure,
+  useColorMode,
 } from '@chakra-ui/react'
 import { Wallet } from '@solana/wallet-adapter-react'
 import dayjs from 'dayjs'
@@ -89,6 +90,7 @@ function getNetworkIcon(network: string): ReactNode | undefined {
 
 export default function WalletRecentTransactionBoard({ wallet, address, isOpen = false, onClose, onDisconnect }: WalletMenuProps) {
   const { t } = useTranslation()
+  const { colorMode } = useColorMode()
   const allRecords = getTxAllRecord()
 
   const handleDisConnect = useCallback(() => {
@@ -118,20 +120,22 @@ export default function WalletRecentTransactionBoard({ wallet, address, isOpen =
 
   const recentTransactions: RecentTransaction[] = address
     ? allRecords
-        .filter((r) => r.owner && r.owner === address)
-        .map((record) => ({
-          txId: record.txId,
-          name: (record.isMultiSig ? `(${t('transaction.multisig_wallet')}) ` : '') + t(record.title, record.txValues || {}),
-          status: record.status,
-          description: t(record.description, record.txValues || {}).replaceAll(/(<([^>]+)>)/gi, ''),
-          date: record.time,
-          relatedTokens: record.mintInfo || [],
-          sub: record.subTx
-        }))
+      .filter((r) => r.owner && r.owner === address)
+      .map((record) => ({
+        txId: record.txId,
+        name: (record.isMultiSig ? `(${t('transaction.multisig_wallet')}) ` : '') + t(record.title, record.txValues || {}),
+        status: record.status,
+        description: t(record.description, record.txValues || {}).replaceAll(/(<([^>]+)>)/gi, ''),
+        date: record.time,
+        relatedTokens: record.mintInfo || [],
+        sub: record.subTx
+      }))
     : []
 
   const normalDrawerBody = (
-    <Box>
+    <Box
+
+    >
       {/* Avatar */}
       {solanaWalletInfo && (
         <VStack py={1.5}>
@@ -204,7 +208,11 @@ export default function WalletRecentTransactionBoard({ wallet, address, isOpen =
   return (
     <Drawer variant="flatScreenEdgePanel" size="sm" isOpen={isOpen} onClose={onClose} trapFocus={false}>
       <DrawerOverlay />
-      <DrawerContent>
+      <DrawerContent
+        background={colorMode !== "dark" ? colors.backgroundTransparent11 : colors.backgroundTransparent11}
+        border={colorMode !== "dark" ? colors.cardBorder02 : ""}
+        backdropFilter={colorMode !== "dark" ? colors.backDropFilter : ""}
+      >
         <DrawerCloseButton />
         {/* hidden transaction */}
         <DrawerHeader display="none">{t('recent_transaction.recent_transactions')}</DrawerHeader>

@@ -6,16 +6,21 @@ import DocThumbnailIcon from '@/icons/pageNavigation/DocThumbnailIcon'
 import FeedbackThumbnailIcon from '@/icons/pageNavigation/FeedbackThumbnailIcon'
 import StakingPageThumbnailIcon from '@/icons/pageNavigation/StakingPageThumbnailIcon'
 import { colors } from '@/theme/cssVariables'
-import { Box, Flex, HStack, MenuDivider, MenuItem, MenuList, Text, Link } from '@chakra-ui/react'
+import { Box, Flex, HStack, MenuDivider, MenuItem, MenuList, Text, Link, useColorMode } from '@chakra-ui/react'
 import NextLink from 'next/link'
 
 import { useTranslation } from 'react-i18next'
 
 export function NavMoreButtonMenuPanel() {
   const { t } = useTranslation()
+  const { colorMode } = useColorMode();
   return (
     <MenuList>
-      <Box py={3}>
+      <Box py={3}
+        background={colorMode !== "dark" ? colors.backgroundTransparent11 : colors.backgroundTransparent11}
+        border={colorMode !== "dark" ? colors.cardBorder02 : ""}
+        backdropFilter={colorMode !== "dark" ? colors.backDropFilter : ""}
+      >
         <MenuItem>
           <Link as={NextLink} _hover={{ textDecoration: 'none' }} w="full" href="/staking">
             <HStack>

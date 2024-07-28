@@ -19,7 +19,8 @@ import {
   TabList,
   Tabs,
   Text,
-  VStack
+  VStack,
+  useColorMode
 } from '@chakra-ui/react'
 import {
   ApiV3PoolInfoConcentratedItem,
@@ -104,6 +105,7 @@ export default function MigrateFromStandardDialog({
   pooledAmountB: propAmountB
 }: MigrateFromStandardDialogProps) {
   const { t } = useTranslation()
+  const { colorMode } = useColorMode()
   const isMobile = useAppStore((s) => s.isMobile)
   const getPriceAndTick = useClmmStore((s) => s.getPriceAndTick)
   const migrateToClmmAct = useLiquidityStore((s) => s.migrateToClmmAct)
@@ -320,7 +322,10 @@ export default function MigrateFromStandardDialog({
   return (
     <Modal isOpen={isOpen} onClose={onClose} size={'2xl'}>
       <ModalOverlay />
-      <ModalContent>
+      <ModalContent
+        background={colorMode !== "dark" ? colors.backgroundTransparent11 : colors.backgroundTransparent11}
+        border={colorMode !== "dark" ? colors.cardBorder02 : ""}
+        backdropFilter={colorMode !== "dark" ? colors.backDropFilter : ""}>
         <ModalHeader>{t('migrate_clmm.title')}</ModalHeader>
         <ModalCloseButton />
 

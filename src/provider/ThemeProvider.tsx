@@ -27,7 +27,6 @@ const ThemeProvider: FC<{ children: ReactNode }> = ({ children }) => {
           --chakra-fonts-body: var(--global-font-family);
           --chakra-fonts-mono: var(--global-font-family);
           font-size: 16px;
-          
           background: ${colors.backgroundApp};
           background-attachment: fixed;
           color: ${colors.textPrimary}

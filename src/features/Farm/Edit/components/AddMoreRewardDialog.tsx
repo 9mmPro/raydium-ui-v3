@@ -13,7 +13,8 @@ import {
   ModalOverlay,
   Text,
   VStack,
-  useDisclosure
+  useDisclosure,
+  useColorMode
 } from '@chakra-ui/react'
 import { TokenInfo } from '@raydium-io/raydium-sdk-v2'
 import Decimal from 'decimal.js'
@@ -53,6 +54,7 @@ export default function AddMoreRewardDialog({
   onClose(): void
 }) {
   const { t } = useTranslation()
+  const { colorMode } = useColorMode()
   const getTokenBalanceUiAmount = useTokenAccountStore((s) => s.getTokenBalanceUiAmount)
   const chainTimeOffset = useAppStore((s) => s.chainTimeOffset)
   const onlineCurrentDate = Date.now() + chainTimeOffset
@@ -128,7 +130,11 @@ export default function AddMoreRewardDialog({
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="2xl">
       <ModalOverlay />
-      <ModalContent>
+      <ModalContent
+        background={colorMode !== "dark" ? colors.backgroundTransparent11 : colors.backgroundTransparent11}
+        border={colorMode !== "dark" ? colors.cardBorder02 : ""}
+        backdropFilter={colorMode !== "dark" ? colors.backDropFilter : ""}
+      >
         <ModalHeader>{header}</ModalHeader>
         <ModalCloseButton />
 

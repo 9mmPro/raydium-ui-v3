@@ -52,6 +52,7 @@ interface Props {
 
 export default function SelectWalletModal({ wallets, isOpen, onSelectWallet, onClose }: Props) {
   const { t } = useTranslation()
+  const { colorMode } = useColorMode()
   /*
   const networks: Network[] = [
     { name: 'Solana', icon: <SolanaNetworkIcon /> },
@@ -75,7 +76,11 @@ export default function SelectWalletModal({ wallets, isOpen, onSelectWallet, onC
   return (
     <Modal variant={'mobileFullPage'} isOpen={isOpen} onClose={onClose} onCloseComplete={handleCloseComplete}>
       <ModalOverlay />
-      <ModalContent color={colors.textPrimary} width={['unset', '36em']}>
+      <ModalContent color={colors.textPrimary} width={['unset', '36em']}
+        background={colorMode !== "dark" ? colors.backgroundTransparent11 : colors.backgroundTransparent11}
+        border={colorMode !== "dark" ? colors.cardBorder02 : ""}
+        backdropFilter={colorMode !== "dark" ? colors.backDropFilter : ""}
+      >
         <ModalHeader>{t('wallet_connect_panel.title')}</ModalHeader>
         <ModalCloseButton />
         {isWalletNotInstalled ? (

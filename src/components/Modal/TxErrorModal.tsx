@@ -1,13 +1,18 @@
 import CircleError from '@/icons/misc/CircleError'
 import { colors } from '@/theme/cssVariables'
-import { Button, HStack, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Text, VStack } from '@chakra-ui/react'
+import { Button, HStack, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Text, VStack, useColorMode } from '@chakra-ui/react'
 import { ReactNode } from 'react'
 
 export function TxErrorModal(props: { isOpen: boolean; onClose: () => void; title?: ReactNode; description?: ReactNode }) {
+  const { colorMode } = useColorMode()
   return (
     <Modal isOpen={props.isOpen} onClose={props.onClose} size={'sm'}>
       <ModalOverlay />
-      <ModalContent minW={['auto', '400px']}>
+      <ModalContent minW={['auto', '400px']}
+        background={colorMode !== "dark" ? colors.backgroundTransparent11 : colors.backgroundTransparent11}
+        border={colorMode !== "dark" ? colors.cardBorder02 : ""}
+        backdropFilter={colorMode !== "dark" ? colors.backDropFilter : ""}
+      >
         <ModalHeader display="none">Create Farm TX error!!</ModalHeader>
         <ModalBody>
           <VStack pt={3} spacing={3}>

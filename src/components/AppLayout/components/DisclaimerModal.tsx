@@ -10,7 +10,8 @@ import {
   Box,
   VStack,
   Flex,
-  useDisclosure
+  useDisclosure,
+  useColorMode,
 } from '@chakra-ui/react'
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -20,6 +21,7 @@ const DISCLAIMER_KEY = '_r_have_agreed_disclaimer_'
 
 function DisclaimerModal() {
   const { t } = useTranslation()
+  const { colorMode } = useColorMode()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [userHaveAgree, setUserHaveAgree] = useState(false)
 
@@ -45,7 +47,12 @@ function DisclaimerModal() {
       closeOnEsc={false}
     >
       <ModalOverlay />
-      <ModalContent bg={colors.backgroundLight} border={`1px solid ${colors.buttonSolidText}`} p={{ base: 4, md: 8 }}>
+      <ModalContent
+        bg={colors.backgroundLight}
+        border={`1px solid ${colors.buttonSolidText}`} p={{ base: 4, md: 8 }}
+        background={colorMode !== "dark" ? colors.backgroundTransparent11 : colors.backgroundTransparent11}
+        backdropFilter={colorMode !== "dark" ? colors.backDropFilter : ""}
+      >
         <Text fontSize="xl" fontWeight="medium" color={colors.text02} mb={5}>
           {t('disclaimer.title')}
         </Text>

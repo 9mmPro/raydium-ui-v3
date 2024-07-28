@@ -1,4 +1,4 @@
-import { Text, Button, Modal, ModalBody, ModalContent, ModalHeader, ModalOverlay, ModalFooter } from '@chakra-ui/react'
+import { Text, Button, Modal, ModalBody, ModalContent, ModalHeader, ModalOverlay, ModalFooter, useColorMode } from '@chakra-ui/react'
 import { useTranslation, Trans } from 'react-i18next'
 import CircleInfo from '@/icons/misc/CircleInfo'
 import { colors } from '@/theme/cssVariables'
@@ -15,11 +15,16 @@ export default function HighRiskAlert({
   percent: number
 }) {
   const { t } = useTranslation()
+  const { colorMode } = useColorMode()
 
   return (
     <Modal size="md" isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
-      <ModalContent sx={{ bg: 'rgba(28, 36, 62, 1)' }}>
+      <ModalContent sx={{ bg: 'rgba(28, 36, 62, 1)' }}
+        background={colorMode !== "dark" ? colors.backgroundTransparent11 : colors.backgroundTransparent11}
+        border={colorMode !== "dark" ? colors.cardBorder02 : ""}
+        backdropFilter={colorMode !== "dark" ? colors.backDropFilter : ""}
+      >
         <ModalHeader display="flex" flexDirection="column" alignItems="center" gap="6" px="12" fontSize="xl">
           <CircleInfo fill={colors.semanticError} width={24} height={24} />
           <Text variant="dialogTitle">{t('swap.alert_high_price_warn_title')}</Text>

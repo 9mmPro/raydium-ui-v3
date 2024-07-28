@@ -8,7 +8,8 @@ import {
   ModalOverlay,
   ModalProps as _ModalProps,
   VStack,
-  SystemStyleObject
+  SystemStyleObject,
+  useColorMode
 } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
 
@@ -43,10 +44,15 @@ export default function Modal({
   ...rest
 }: ModalProps) {
   const { t } = useTranslation()
+  const { colorMode } = useColorMode()
   return (
     <_Modal {...rest} isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
-      <ModalContent minWidth="min-content">
+      <ModalContent minWidth="min-content"
+        background={colorMode !== "dark" ? colors.backgroundTransparent11 : colors.backgroundTransparent11}
+        border={colorMode !== "dark" ? colors.cardBorder02 : ""}
+        backdropFilter={colorMode !== "dark" ? colors.backDropFilter : ""}
+      >
         <ModalHeader color={colors.textPrimary} fontWeight="medium" fontSize="xl" pt={8} mb={6}>
           {title}
         </ModalHeader>

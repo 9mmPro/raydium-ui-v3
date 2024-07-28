@@ -1,10 +1,11 @@
 import { useRecordedEffect } from '@/hooks/useRecordedEffect'
 import { useScrollDegreeDetector } from '@/hooks/useScrollDegreeDetector'
 import mergeRef from '@/utils/react/mergeRef'
-import { FlexProps, Grid, forwardRef } from '@chakra-ui/react'
+import { FlexProps, Grid, forwardRef, useColorMode } from '@chakra-ui/react'
 import { ReactNode, createContext, useDeferredValue, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
 import { ObserveFn, useIntersectionObserver } from '../hooks/useIntersectionObserver'
 import ListItem from './ListItem'
+import { colors } from '@/theme/cssVariables'
 
 /**
  * if ref is already stand as a domRef, there should be another ref for component methods
@@ -73,7 +74,7 @@ function List<T>(
 ) {
   const items = useDeferredValue(_items) // ⚡ lazy load to avoid render task aborting critical main thread
   const listRef = useRef<HTMLDivElement>(null)
-
+  const { colorMode } = useColorMode()
   const { observe, stop } = useIntersectionObserver({ rootRef: listRef, options: { rootMargin: '80%' } })
   const contextValue = useMemo(() => ({ observeFn: observe }), [observe])
 
@@ -140,14 +141,15 @@ function List<T>(
           gridSlotItemMinWidth != null
             ? `repeat(auto-fill, minmax(${gridSlotItemMinWidth}px, 1fr))`
             : gridSlotItemWidth != null
-            ? `repeat(auto-fill, ${gridSlotItemWidth}px)`
-            : gridSlotCount != null
-            ? `repeat(${gridSlotCount}, minmax(0, 1fr))`
-            : undefined
+              ? `repeat(auto-fill, ${gridSlotItemWidth}px)`
+              : gridSlotCount != null
+                ? `repeat(${gridSlotCount}, minmax(0, 1fr))`
+                : undefined
         }
         justifyContent={gridSlotCount || gridSlotItemMinWidth || gridSlotItemWidth ? 'center' : undefined}
         overflow="overlay" // overlay is prettier
         {...props}
+        border={colorMode !== "dark" ? colors.cardBorder02 : ""}
       >
         {allListItems}
       </Grid>

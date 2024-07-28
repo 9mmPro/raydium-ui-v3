@@ -3,8 +3,9 @@ import TokenInput from '@/components/TokenInput'
 import { useEvent } from '@/hooks/useEvent'
 import { useAppStore } from '@/store/useAppStore'
 import { useFarmStore } from '@/store/useFarmStore'
+import { colors } from '@/theme/cssVariables'
 import { wSolToSolString } from '@/utils/token'
-import { Button, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, VStack } from '@chakra-ui/react'
+import { Button, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, VStack, useColorMode } from '@chakra-ui/react'
 import { ApiStakePool } from '@raydium-io/raydium-sdk-v2'
 import Decimal from 'decimal.js'
 import { useEffect, useState } from 'react'
@@ -20,6 +21,7 @@ interface Props {
 
 export default function UnstakeDialog({ isOpen, onClose, depositedAmount, userAuxiliaryLedgers, pool }: Props) {
   const { t } = useTranslation()
+  const { colorMode } = useColorMode()
   const featureDisabled = useAppStore((s) => s.featureDisabled.removeFarm)
   const withdrawFarmAct = useFarmStore((s) => s.withdrawFarmAct)
 
@@ -56,7 +58,11 @@ export default function UnstakeDialog({ isOpen, onClose, depositedAmount, userAu
   return (
     <Modal isOpen={isOpen} onClose={handleClose}>
       <ModalOverlay />
-      <ModalContent>
+      <ModalContent
+        background={colorMode !== "dark" ? colors.backgroundTransparent11 : colors.backgroundTransparent11}
+        border={colorMode !== "dark" ? colors.cardBorder02 : ""}
+        backdropFilter={colorMode !== "dark" ? colors.backDropFilter : ""}
+      >
         <ModalHeader>{t('staking.unstake_modal_header', { symbol: wSolToSolString(token?.symbol) })}</ModalHeader>
         <ModalCloseButton />
 

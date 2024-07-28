@@ -10,7 +10,8 @@ import {
   ModalOverlay,
   ModalCloseButton,
   Text,
-  VStack
+  VStack,
+  useColorMode
 } from '@chakra-ui/react'
 import Decimal from 'decimal.js'
 import { useTranslation } from 'react-i18next'
@@ -27,6 +28,7 @@ import { QuestionToolTip } from '@/components/QuestionToolTip'
 
 export function SlippageSettingModal(props: { variant: 'swap' | 'liquidity'; isOpen: boolean; onClose: () => void }) {
   const { t } = useTranslation()
+  const { colorMode } = useColorMode()
   const isSwap = props.variant === 'swap'
   const SLIPPAGE_KEY = isSwap ? SWAP_SLIPPAGE_KEY : LIQUIDITY_SLIPPAGE_KEY
   const swapSlippage = useSwapStore((s) => s.slippage)
@@ -80,10 +82,12 @@ export function SlippageSettingModal(props: { variant: 'swap' | 'liquidity'; isO
       <ModalOverlay />
       <ModalContent
         borderRadius="20px"
-        border={`1px solid ${colors.backgroundDark}`}
+        border={colors.cardBorder02}
         boxShadow="0px 8px 48px 0px #4F53F31A"
         paddingInline="2rem"
         py="2rem"
+        background={colorMode !== "dark" ? colors.backgroundTransparent11 : colors.backgroundTransparent11}
+        backdropFilter={colorMode !== "dark" ? colors.backDropFilter : ""}
       >
         <ModalHeader marginTop={0} marginBottom={'48px'}>
           <HStack spacing="6px">

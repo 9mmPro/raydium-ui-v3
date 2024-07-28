@@ -14,7 +14,8 @@ import {
   VStack,
   TabList,
   Tabs,
-  Tab
+  Tab,
+  useColorMode
 } from '@chakra-ui/react'
 import Decimal from 'decimal.js'
 import { SOLMint } from '@raydium-io/raydium-sdk-v2'
@@ -38,6 +39,7 @@ export function PriorityModalContent(props: {
   onClose: () => void
 }) {
   const { t } = useTranslation()
+  const { colorMode } = useColorMode()
   const contentRef = useRef<HTMLDivElement>(null)
   const triggerPanelGap = 24
   const isMobile = useAppStore((s) => s.isMobile)
@@ -103,9 +105,11 @@ export function PriorityModalContent(props: {
         marginTop={0}
         marginRight={['auto', 0]}
         borderRadius="20px"
-        border={`1px solid ${colors.backgroundDark}`}
+        border={colors.cardBorder02}
         boxShadow="0px 8px 48px 0px #4F53F31A"
         paddingInline="2rem"
+        background={colorMode !== "dark" ? colors.backgroundTransparent11 : colors.backgroundTransparent11}
+        backdropFilter={colorMode !== "dark" ? colors.backDropFilter : ""}
       >
         <ModalHeader>
           <HStack spacing="6px">
